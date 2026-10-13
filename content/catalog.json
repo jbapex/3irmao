@@ -1,0 +1,153 @@
+[
+  {
+    "id": "confeitaria",
+    "name": "Confeitaria",
+    "short": "Recheios, coberturas e ingredientes.",
+    "color": "#c6d7ff",
+    "tag": "INGREDIENTES",
+    "description": "Chocolates, recheios, coberturas, corantes e ingredientes para bolos e doces.",
+    "items": [
+      "Chocolates para confeitaria",
+      "Coberturas e recheios",
+      "Corantes alimentícios",
+      "Confeitos e granulados",
+      "Ingredientes para bolos e doces",
+      "Creme de tártaro e CMC",
+      "Pectina e lecitina",
+      "Coberturas raladas"
+    ],
+    "keywords": {
+      "1": "DiCaramella damasco caramelo recheio cobertura"
+    }
+  },
+  {
+    "id": "frios",
+    "name": "Frios e congelados",
+    "short": "Queijos, frios e congelados.",
+    "color": "#ffe28b",
+    "tag": "FRIOS E CONGELADOS",
+    "description": "Frios fatiados, bacon, calabresa, requeijão, pães e porções congeladas para o preparo de lanches.",
+    "items": [
+      "Frios fatiados",
+      "Bacon",
+      "Calabresa",
+      "Salsichas",
+      "Pães congelados",
+      "Pão de queijo",
+      "Batatas e porções congeladas",
+      "Requeijão cremoso",
+      "Cheddar e cream cheese em bisnagas"
+    ],
+    "keywords": {
+      "7": "Alcremo requeijão bisnaga",
+      "8": "Alcremo queijo processado cheddar"
+    }
+  },
+  {
+    "id": "doces",
+    "name": "Doces e chocolates",
+    "short": "Balas, chocolates e importados.",
+    "color": "#ffd65e",
+    "tag": "DOCES",
+    "description": "Barras, bombons, balas, pirulitos e biscoitos. Produtos nacionais e importados para casa, festas e revenda.",
+    "items": [
+      "Barras e bombons",
+      "Balas e pirulitos",
+      "Gomas e marshmallows",
+      "Paçocas e doces tradicionais",
+      "Doces e chocolates importados",
+      "Biscoitos importados",
+      "PEZ e guloseimas com personagens"
+    ],
+    "keywords": {
+      "0": "Milka chocolate tablete",
+      "1": "Pietrobon Piteco Mix pirulito",
+      "2": "Amos Peelirz 4D fruit gummy morango pêssego uva",
+      "4": "Oreo alfajor Milka Amos doces importados"
+    }
+  },
+  {
+    "id": "embalagens",
+    "name": "Embalagens e descartáveis",
+    "short": "Potes, caixas, marmitas e descartáveis.",
+    "color": "#aecbff",
+    "tag": "EMBALAGENS",
+    "description": "Embalagens para bolos, doces e refeições, potes, tampas, sacolas e descartáveis.",
+    "items": [
+      "Embalagens para bolos e doces",
+      "Potes e tampas",
+      "Marmitas e embalagens para alimentos",
+      "Copos, pratos e talheres",
+      "Sacolas"
+    ]
+  },
+  {
+    "id": "festas",
+    "name": "Festas e balões",
+    "short": "Balões, gás hélio e decoração.",
+    "color": "#ffc933",
+    "tag": "FESTAS",
+    "description": "Balões de látex e metalizados, artigos de decoração, infladores e gás hélio. Consulte modelos e enchimento com a loja.",
+    "items": [
+      "Balões de látex",
+      "Balões metalizados",
+      "Balões com gás hélio",
+      "Artigos de decoração",
+      "Itens para festas sazonais",
+      "Cilindros de gás hélio",
+      "Infladores de balões"
+    ],
+    "keywords": {
+      "1": "Silver Festas balão cromado metalizado coração estrela"
+    }
+  },
+  {
+    "id": "utensilios",
+    "name": "Utensílios de confeitaria",
+    "short": "Bicos, formas e acessórios.",
+    "color": "#d1defc",
+    "tag": "UTENSÍLIOS",
+    "description": "Bicos de confeitar, formas, raspadores, borrifadores e placas porcionadoras.",
+    "items": [
+      "Bicos e acessórios de confeitar",
+      "Raspadores de chocolate",
+      "Borrifadores para bolos",
+      "Placas porcionadoras",
+      "Utensílios para decoração",
+      "Formas para bolos e pudins"
+    ],
+    "keywords": {
+      "0": "Wilton bico número 12 perlé pérola"
+    }
+  },
+  {
+    "id": "cestas",
+    "name": "Cestas e presentes",
+    "short": "Caixas, celofanes e acabamentos.",
+    "color": "#ffdc78",
+    "tag": "PRESENTES",
+    "description": "Caixas, celofanes, fitilhos e itens para montar cestas, kits e lembranças.",
+    "items": [
+      "Itens para montagem de cestas",
+      "Celofanes",
+      "Fitilhos e acabamentos",
+      "Embalagens para presentes",
+      "Itens para kits e lembranças"
+    ]
+  },
+  {
+    "id": "alimentos",
+    "name": "Alimentos e bebidas",
+    "short": "Mercearia, snacks e bebidas.",
+    "color": "#bfd7ff",
+    "tag": "MERCEARIA",
+    "description": "Farinhas, leite, creme de leite, óleos, salgadinhos e bebidas.",
+    "items": [
+      "Farinhas e ingredientes básicos",
+      "Leite e creme de leite",
+      "Óleos para preparo",
+      "Salgadinhos e snacks",
+      "Refrigerantes e bebidas"
+    ]
+  }
+]

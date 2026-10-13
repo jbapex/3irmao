@@ -1,0 +1,68 @@
+[
+  {
+    "id": "historia",
+    "kind": "game",
+    "name": "Nossa história",
+    "heading": "Seis missões com o Dedei",
+    "description": "Da rota de doces à abertura das lojas. Uma história de família para conhecer jogando.",
+    "product": "A história da 3 Irmãos",
+    "detail": "A história da família",
+    "image": "/assets/historia/convite-jogo-v2.jpg",
+    "width": 1536,
+    "height": 1024,
+    "alt": "Cena criativa do Dedei fazendo uma entrega em uma cidade azul e amarela que emerge de um livro aberto",
+    "button": "Conhecer o jogo",
+    "href": "/a-3-irmaos/",
+    "intro": {
+      "eyebrow": "",
+      "title": "Jogue a nossa<br><em>história.</em>",
+      "copy": "Faça entregas, conheça os personagens e descubra como a 3 Irmãos começou. O Dedei acompanha você nessa história.",
+      "button": "Jogar nossa história",
+      "href": "/a-3-irmaos/"
+    },
+    "related": [
+      "confeitaria",
+      "frios",
+      "utensilios"
+    ],
+    "framing": "history"
+  },
+  {
+    "id": "celebrar",
+    "name": "Festas",
+    "heading": "Balões para decorar sua festa",
+    "description": "Látex, metalizados, corações e flores. Consulte cores e opções com gás hélio.",
+    "product": "Balões de coração",
+    "detail": "Festas, balões e presentes",
+    "image": "/assets/catalogo/festas-v1.jpg",
+    "alt": "Embalagens de balões metalizados Silver Festas em formato de coração, dourado e prata",
+    "button": "Ver festas e balões",
+    "href": "/produtos/?categoria=festas",
+    "related": [
+      "cestas",
+      "doces"
+    ],
+    "framing": "studio",
+    "width": 1024,
+    "height": 1024
+  },
+  {
+    "id": "revender",
+    "name": "Doces",
+    "heading": "Biscoitos, chocolates e guloseimas",
+    "description": "Produtos nacionais e importados para o balcão, a festa ou um presente.",
+    "product": "Gomas importadas",
+    "detail": "Doces, chocolates e descobertas",
+    "image": "/assets/catalogo/doces-v1.jpg",
+    "alt": "Gomas Amos Peelirz de morango e pêssego",
+    "button": "Ver doces e chocolates",
+    "href": "/produtos/?categoria=doces",
+    "related": [
+      "alimentos",
+      "embalagens"
+    ],
+    "framing": "studio",
+    "width": 1024,
+    "height": 1024
+  }
+]

@@ -1,0 +1,16 @@
+import assert from 'node:assert/strict';
+const origin='http://localhost:4317';
+const anonymous=await fetch(origin+'/api/admin/state/');assert.equal(anonymous.status,401);
+const login=await fetch(origin+'/api/auth/login/',{method:'POST',headers:{Origin:origin,'Content-Type':'application/json'},body:JSON.stringify({username:'admin',password:'local-preview-only'})});assert.equal(login.status,200);const auth=await login.json();const cookie=login.headers.get('set-cookie').split(';')[0];
+const headers={Origin:origin,Cookie:cookie,'X-CSRF-Token':auth.csrf};
+let snapshot=await (await fetch(origin+'/api/admin/state/',{headers})).json();
+const photo=await fetch(origin+'/assets/catalogo/milka-v1.jpg');assert.equal(photo.status,200);const original=await photo.arrayBuffer();
+const form=new FormData();form.append('image',new Blob([original],{type:'image/jpeg'}),'test-photo.jpg');
+const upload=await fetch(origin+'/api/admin/image/',{method:'POST',headers,body:form});assert.equal(upload.status,200);const image=await upload.json();const loaded=await fetch(origin+image.url);assert.equal(loaded.status,200);assert.equal((await loaded.arrayBuffer()).byteLength,original.byteLength);
+const next=structuredClone(snapshot.state);next.categories.push({id:'categoria-teste-http',name:'Categoria de teste',short:'Teste local',description:'Teste local',tag:'TESTE',color:'#c6d7ff',image:image.url,items:[],keywords:{}});next.products.push({id:'produto-teste-http',category:'categoria-teste-http',name:'Produto cadastrado no painel',brand:'Teste',detail:'Unidade',description:'Teste de persistência local',keywords:'teste',image:image.url,reference:image.url,source:''});
+const save=await fetch(origin+'/api/admin/state/',{method:'PUT',headers:{...headers,'Content-Type':'application/json'},body:JSON.stringify({state:next,revision:snapshot.revision})});assert.equal(save.status,200);const saved=await save.json();assert.equal(saved.revision,snapshot.revision+1);
+const html=await (await fetch(origin+'/produtos/')).text();assert.ok(html.includes('Produto cadastrado no painel'));assert.ok(html.includes('Categoria de teste'));assert.ok(html.includes(image.url));
+const stale=await fetch(origin+'/api/admin/state/',{method:'PUT',headers:{...headers,'Content-Type':'application/json'},body:JSON.stringify(snapshot)});assert.equal(stale.status,409);
+const restored=await fetch(origin+'/api/admin/state/',{method:'PUT',headers:{...headers,'Content-Type':'application/json'},body:JSON.stringify({state:snapshot.state,revision:saved.revision})});assert.equal(restored.status,200);
+await fetch(origin+'/api/auth/logout/',{method:'POST',headers});
+console.log('HTTP checks passed: local login, D1 save, category/product creation, R2 upload/read, server-rendered catalog update, revision conflict and cleanup.');

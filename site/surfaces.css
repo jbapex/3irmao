@@ -1,0 +1,57 @@
+/* Shared depth for content blocks, loaded after page styles. */
+:root{
+  --block-border:#d6deea;
+  --block-shadow:0 2px 5px rgb(19 42 78 / .08),0 12px 24px -6px rgb(19 42 78 / .22);
+  --block-shadow-soft:0 2px 4px rgb(19 42 78 / .07),0 8px 18px -5px rgb(19 42 78 / .18);
+  --block-shadow-raised:0 4px 8px rgb(19 42 78 / .1),0 20px 36px -8px rgb(19 42 78 / .27);
+  --block-shadow-panel:0 3px 8px rgb(19 42 78 / .09),0 18px 38px -9px rgb(19 42 78 / .25);
+}
+:is(.department-card,.home-store,.home-post,.home-business-photo,.home-history-game,.product-item,.store-card,.photo-tile,.gallery-frame),
+:is(.department-card,.home-store,.home-post,.home-history-game,.product-item,.photo-tile):hover{
+  box-shadow:var(--block-shadow);
+  border-color:var(--block-border);
+}
+:is(.department-card,.home-post,.home-history-game,.product-item,.photo-tile){
+  transition:border-color .22s ease,box-shadow .22s ease,transform .22s ease;
+}
+.product-item.catalog-group,.product-item.catalog-group:hover{
+  background:#fff;
+  box-shadow:var(--block-shadow-soft);
+}
+.home-store,.store-card,.store-card:nth-child(2){background:#fff}
+.contact-form,.map-shell,.segment-panel{
+  box-shadow:var(--block-shadow-panel);
+  border-color:var(--block-border);
+}
+.gallery-frame{border:1px solid var(--block-border)}
+.story-stage:not(.is-immersive){box-shadow:var(--block-shadow-panel)}
+.list-dialog{
+  box-shadow:0 8px 20px rgb(12 28 58 / .18),0 30px 70px -14px rgb(12 28 58 / .35);
+}
+body:not([data-page=novidades]) .site-header.is-scrolled{
+  box-shadow:0 3px 7px rgb(19 42 78 / .06),0 9px 20px -9px rgb(19 42 78 / .23);
+}
+body[data-page=novidades] .room-product{
+  box-shadow:0 4px 10px rgb(0 8 26 / .22),0 22px 42px -6px rgb(0 8 26 / .38);
+}
+@media(hover:hover) and (pointer:fine){
+  :is(.department-card,.home-post,.home-history-game,.product-item,.photo-tile):hover{
+    box-shadow:var(--block-shadow-raised);
+    border-color:#a9bada;
+  }
+  .product-item.catalog-group:hover{box-shadow:var(--block-shadow)}
+}
+:is(.department-card,.home-history-game,.photo-tile):focus-visible{
+  box-shadow:var(--block-shadow-raised);
+}
+@media(max-width:600px){
+  :root{
+    --block-shadow:0 2px 4px rgb(19 42 78 / .08),0 9px 18px -5px rgb(19 42 78 / .21);
+    --block-shadow-soft:0 2px 4px rgb(19 42 78 / .06),0 6px 14px -4px rgb(19 42 78 / .17);
+    --block-shadow-panel:0 3px 7px rgb(19 42 78 / .08),0 13px 26px -7px rgb(19 42 78 / .23);
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  :is(.department-card,.home-post,.home-history-game,.product-item,.photo-tile){transition:none}
+}
+

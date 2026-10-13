@@ -1,0 +1,74 @@
+{
+  "logo": "/assets/logo.png",
+  "hero": "/assets/catalogo/cestas-v1.jpg",
+  "hero_alt": "Caixa para presente com tampa xadrez cinza e creme",
+  "hero_illustrative": false,
+  "store": null,
+  "store_alt": "Distribuidora 3 Irmãos",
+  "video": null,
+  "categories": {
+    "doces": "/assets/catalogo/doces-v1.jpg",
+    "embalagens": "/assets/catalogo/embalagens-v1.jpg",
+    "festas": "/assets/catalogo/festas-v1.jpg",
+    "cestas": "/assets/catalogo/cestas-v1.jpg",
+    "confeitaria": "/assets/catalogo/confeitaria-v1.jpg",
+    "frios": "/assets/catalogo/frios-v1.jpg",
+    "utensilios": "/assets/catalogo/utensilios-v1.jpg",
+    "alimentos": "/assets/catalogo/alimentos-v1.jpg"
+  },
+  "hero_slides": [
+    {
+      "src": "/assets/catalogo/cestas-v1.jpg",
+      "alt": "Caixa para presente com tampa xadrez cinza e creme",
+      "label": "EMBALAGENS",
+      "href": "/produtos/?categoria=embalagens"
+    },
+    {
+      "src": "/assets/catalogo/doces-v1.jpg",
+      "alt": "Gomas Amos Peelirz de morango e pêssego",
+      "label": "DOCES",
+      "href": "/produtos/?categoria=doces"
+    },
+    {
+      "src": "/assets/catalogo/festas-v1.jpg",
+      "alt": "Embalagens de balões metalizados Silver Festas em formato de coração, dourado e prata",
+      "label": "FESTAS",
+      "href": "/produtos/?categoria=festas"
+    }
+  ],
+  "gallery": [
+    {
+      "src": "/assets/catalogo/confeitaria-v1.jpg",
+      "alt": "Pote DiCaramella de recheio e cobertura de damasco, 400 g",
+      "caption": "Recheio e cobertura DiCaramella de damasco."
+    },
+    {
+      "src": "/assets/catalogo/doces-v1.jpg",
+      "alt": "Gomas Amos Peelirz de morango e pêssego",
+      "caption": "Gomas Amos Peelirz de morango e pêssego."
+    },
+    {
+      "src": "/assets/catalogo/pirulitos-v1.jpg",
+      "alt": "Pacote de pirulitos Pietrobon Piteco Mix, 500 unidades",
+      "caption": "Pirulitos Pietrobon para festas e revenda."
+    },
+    {
+      "src": "/assets/catalogo/frios-v1.jpg",
+      "alt": "Bisnaga Alcremo de requeijão cremoso, 1,01 kg",
+      "caption": "Requeijão cremoso Alcremo para o preparo."
+    }
+  ],
+  "products": {
+    "confeitaria-1": "/assets/catalogo/confeitaria-v1.jpg",
+    "frios-7": "/assets/catalogo/frios-v1.jpg",
+    "frios-8": "/assets/catalogo/cheddar-v1.jpg",
+    "doces-0": "/assets/catalogo/milka-v1.jpg",
+    "doces-1": "/assets/catalogo/pirulitos-v1.jpg",
+    "doces-2": "/assets/catalogo/doces-v1.jpg",
+    "doces-4": "/assets/catalogo/oreo-v1.jpg",
+    "embalagens-0": "/assets/catalogo/embalagens-v1.jpg",
+    "festas-1": "/assets/catalogo/festas-v1.jpg",
+    "utensilios-0": "/assets/catalogo/utensilios-v1.jpg",
+    "cestas-3": "/assets/catalogo/cestas-v1.jpg"
+  }
+}

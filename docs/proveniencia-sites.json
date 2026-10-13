@@ -1,0 +1,11 @@
+{
+  "project_id": "appgprj_6a9c44a294cc8191af8e77118c87e77d",
+  "site_version": 31,
+  "source_commit": "a46ce365a98404ec67c4dc2b21f8115a8f29c7e1",
+  "site_url": "https://distribuidora-3-irmaos.josiasbonfim.chatgpt.site/",
+  "exported_on": "2026-10-13",
+  "excluded_local_files": [
+    ".next/types/routes.d.ts",
+    "node_modules"
+  ]
+}

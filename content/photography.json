@@ -1,0 +1,215 @@
+[
+  {
+    "id": "confeitaria",
+    "src": "/assets/catalogo/confeitaria-v1.jpg",
+    "alt": "Pote DiCaramella de recheio e cobertura de damasco, 400 g",
+    "width": 1024,
+    "height": 1024,
+    "source_kind": "edited_store_photo",
+    "tool": "image_gen.imagegen",
+    "reference": "/assets/instagram/recheio-dicaramella.webp",
+    "post": "https://www.instagram.com/distribuidoras3irmaos/p/Dc1E7UpFG6q/"
+  },
+  {
+    "id": "frios",
+    "src": "/assets/catalogo/frios-v1.jpg",
+    "alt": "Bisnaga Alcremo de requeijão cremoso, 1,01 kg",
+    "width": 1024,
+    "height": 1024,
+    "source_kind": "edited_store_photo",
+    "tool": "image_gen.imagegen",
+    "reference": "/assets/instagram/alcremo-requeijao.webp",
+    "post": "https://www.instagram.com/distribuidoras3irmaos/p/DcO7CFuFHqt/"
+  },
+  {
+    "id": "doces",
+    "src": "/assets/catalogo/doces-v1.jpg",
+    "alt": "Gomas Amos Peelirz de morango e pêssego",
+    "width": 1024,
+    "height": 1024,
+    "source_kind": "edited_store_photo",
+    "tool": "image_gen.imagegen",
+    "reference": "/assets/instagram/gomas-peelirz.webp",
+    "post": "https://www.instagram.com/distribuidoras3irmaos/p/DceRHYZlIUP/"
+  },
+  {
+    "id": "festas",
+    "src": "/assets/catalogo/festas-v1.jpg",
+    "alt": "Embalagens de balões metalizados Silver Festas em formato de coração, dourado e prata",
+    "width": 1024,
+    "height": 1024,
+    "source_kind": "edited_store_photo",
+    "tool": "image_gen.imagegen",
+    "reference": "/assets/instagram/baloes-coracao.webp",
+    "post": "https://www.instagram.com/p/Dbsu15_jELk/?img_index=1"
+  },
+  {
+    "id": "utensilios",
+    "src": "/assets/catalogo/utensilios-v1.jpg",
+    "alt": "Bico de confeitar Wilton número 12 na embalagem original",
+    "width": 1024,
+    "height": 1024,
+    "source_kind": "edited_store_photo",
+    "tool": "image_gen.imagegen",
+    "reference": "/assets/instagram/bico-wilton-12.webp",
+    "post": "https://www.instagram.com/distribuidoras3irmaos/p/DcRj_G7FAFE/"
+  },
+  {
+    "id": "cestas",
+    "src": "/assets/catalogo/cestas-v1.jpg",
+    "alt": "Caixa para presente com tampa xadrez cinza e creme",
+    "width": 1024,
+    "height": 1024,
+    "source_kind": "edited_store_photo",
+    "tool": "image_gen.imagegen",
+    "reference": "/assets/instagram/caixa-xadrez.webp",
+    "post": "https://www.instagram.com/p/DbWIDRSlzq3/?img_index=1"
+  },
+  {
+    "id": "embalagens",
+    "src": "/assets/catalogo/embalagens-v1.jpg",
+    "alt": "Composição ilustrativa de embalagens para alimentos, copos e potes com tampa",
+    "width": 1024,
+    "height": 1024,
+    "source_kind": "illustrative",
+    "tool": "image_gen.imagegen"
+  },
+  {
+    "id": "alimentos",
+    "src": "/assets/catalogo/alimentos-v1.jpg",
+    "alt": "Composição ilustrativa de itens de mercearia: farinha, leite, creme de leite e óleo",
+    "width": 1024,
+    "height": 1024,
+    "source_kind": "illustrative",
+    "tool": "image_gen.imagegen"
+  },
+  {
+    "id": "cheddar",
+    "src": "/assets/catalogo/cheddar-v1.jpg",
+    "alt": "Bisnaga Alcremo de queijo processado sabor cheddar, 1,01 kg",
+    "width": 1024,
+    "height": 1024,
+    "source_kind": "edited_store_photo",
+    "tool": "image_gen.imagegen",
+    "reference": "/assets/instagram/alcremo-cheddar.webp",
+    "post": "https://www.instagram.com/distribuidoras3irmaos/p/DcO7CFuFHqt/"
+  },
+  {
+    "id": "milka",
+    "src": "/assets/catalogo/milka-v1.jpg",
+    "alt": "Chocolates Milka Bubbly White e Bubbly Alpine Milk",
+    "width": 1024,
+    "height": 1024,
+    "source_kind": "edited_store_photo",
+    "tool": "image_gen.imagegen",
+    "reference": "/assets/instagram/chocolates-milka.webp",
+    "post": "https://www.instagram.com/distribuidoras3irmaos/p/DceRQbKFK5u/"
+  },
+  {
+    "id": "pirulitos",
+    "src": "/assets/catalogo/pirulitos-v1.jpg",
+    "alt": "Pacote de pirulitos Pietrobon Piteco Mix, 500 unidades",
+    "width": 1024,
+    "height": 1024,
+    "source_kind": "edited_store_photo",
+    "tool": "image_gen.imagegen",
+    "reference": "/assets/instagram/pirulitos-pietrobon.webp",
+    "post": "https://www.instagram.com/distribuidoras3irmaos/p/DcPKDDYDbiO/"
+  },
+  {
+    "id": "oreo",
+    "src": "/assets/catalogo/oreo-v1.jpg",
+    "alt": "Embalagem de alfajor Oreo",
+    "width": 1024,
+    "height": 1024,
+    "source_kind": "edited_store_photo",
+    "tool": "image_gen.imagegen",
+    "reference": "/assets/instagram/alfajor-oreo.webp",
+    "post": "https://www.instagram.com/distribuidoras3irmaos/p/DceRQbKFK5u/"
+  },
+  {
+    "id": "frutas-amarelas",
+    "src": "/assets/catalogo/frutas-amarelas-v1.jpg",
+    "alt": "Recheio DiCaramella de frutas amarelas — 1,2 kg",
+    "width": 1024,
+    "height": 1024,
+    "source_kind": "edited_store_photo",
+    "tool": "image_gen.imagegen",
+    "reference": "/assets/instagram/recheio-dicaramella-pote.webp",
+    "post": "https://www.instagram.com/distribuidoras3irmaos/p/Dc1E7UpFG6q/"
+  },
+  {
+    "id": "alcremo-culinario",
+    "src": "/assets/catalogo/alcremo-culinario-v1.jpg",
+    "alt": "Mistura culinária Alcremo — 1,01 kg",
+    "width": 1024,
+    "height": 1024,
+    "source_kind": "edited_store_photo",
+    "tool": "image_gen.imagegen",
+    "reference": "/assets/instagram/alcremo-mistura-requeijao.webp",
+    "post": "https://www.instagram.com/distribuidoras3irmaos/p/DcO7CFuFHqt/"
+  },
+  {
+    "id": "amos-4d",
+    "src": "/assets/catalogo/amos-4d-v1.jpg",
+    "alt": "Gomas Amos 4D Fruit Gummy — Uva e morango · 65 g",
+    "width": 1024,
+    "height": 1024,
+    "source_kind": "edited_store_photo",
+    "tool": "image_gen.imagegen",
+    "reference": "/assets/instagram/gomas-amos-4d.webp",
+    "post": "https://www.instagram.com/distribuidoras3irmaos/p/DceRHYZlIUP/"
+  },
+  {
+    "id": "balas-pietrobon",
+    "src": "/assets/catalogo/balas-pietrobon-v1.jpg",
+    "alt": "Balas Pietrobon em pote — Sortidas e menta",
+    "width": 1024,
+    "height": 1024,
+    "source_kind": "edited_store_photo",
+    "tool": "image_gen.imagegen",
+    "reference": "/assets/instagram/doces-pietrobon.webp",
+    "post": "https://www.instagram.com/distribuidoras3irmaos/p/DcPKDDYDbiO/"
+  },
+  {
+    "id": "caixas-florais",
+    "src": "/assets/catalogo/caixas-florais-v1.jpg",
+    "alt": "Caixas para presente com estampa floral — Verde",
+    "width": 1024,
+    "height": 1024,
+    "source_kind": "edited_store_photo",
+    "tool": "image_gen.imagegen",
+    "reference": "/assets/instagram/caixas-florais.webp",
+    "post": "https://www.instagram.com/p/DbWIDRSlzq3/?img_index=2"
+  },
+  {
+    "id": "morango-coberto",
+    "src": "/assets/catalogo/morango-coberto-v1.jpg",
+    "alt": "Morango coberto importado — Sabor leite · 60 g",
+    "width": 1024,
+    "height": 1024,
+    "source_kind": "edited_store_photo",
+    "tool": "image_gen.imagegen",
+    "reference": "/assets/doces-morango.webp"
+  },
+  {
+    "id": "caixas-kraft",
+    "src": "/assets/catalogo/caixas-kraft-v1.jpg",
+    "alt": "Caixas decoradas kraft — Tampa geométrica",
+    "width": 1024,
+    "height": 1024,
+    "source_kind": "edited_store_photo",
+    "tool": "image_gen.imagegen",
+    "reference": "/assets/caixas-kraft.webp"
+  },
+  {
+    "id": "caixas-listradas",
+    "src": "/assets/catalogo/caixas-listradas-v1.jpg",
+    "alt": "Caixas listradas para presente — Tampa vermelha",
+    "width": 1024,
+    "height": 1024,
+    "source_kind": "edited_store_photo",
+    "tool": "image_gen.imagegen",
+    "reference": "/assets/caixas-listradas.webp"
+  }
+]

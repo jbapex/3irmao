@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://distribuidora-3-irmaos.josiasbonfim.chatgpt.site/sitemap.xml
