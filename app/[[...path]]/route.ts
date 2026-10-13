@@ -1,20 +1,24 @@
-import { env } from 'cloudflare:workers';
-import home from '../../site/index.html?raw';
-import products from '../../site/produtos/index.html?raw';
-import business from '../../site/para-seu-negocio/index.html?raw';
-import news from '../../site/novidades/index.html?raw';
-import story from '../../site/a-3-irmaos/index.html?raw';
-import stores from '../../site/lojas/index.html?raw';
-import admin from '../../site/admin/index.html?raw';
+import { readFile } from 'node:fs/promises';
+import { join } from 'node:path';
+import { getRuntime, publicRequest } from '../../server/node-runtime.mjs';
 import { readState, publicCatalog, activeOffers } from '../../server/api.mjs';
 import { renderPage } from '../../server/render.mjs';
 export const dynamic = 'force-dynamic';
-const pages: Record<string,string> = {'/':home,'/produtos/':products,'/para-seu-negocio/':business,'/novidades/':news,'/a-3-irmaos/':story,'/lojas/':stores,'/admin/':admin};
+export const runtime = 'nodejs';
+const pages: Record<string,string> = {'/':'index.html','/produtos/':'produtos/index.html','/para-seu-negocio/':'para-seu-negocio/index.html','/novidades/':'novidades/index.html','/a-3-irmaos/':'a-3-irmaos/index.html','/lojas/':'lojas/index.html','/admin/':'admin/index.html'};
+const templates = new Map<string,Promise<string>>();
+function template(path:string) {
+ if(!templates.has(path)) templates.set(path,readFile(join(process.cwd(),'site',pages[path]),'utf8'));
+ return templates.get(path)!;
+}
 export async function GET(request: Request) {
+ request=publicRequest(request);
  const rawPath=new URL(request.url).pathname;
  const path=rawPath==='/'?'/':rawPath.replace(/\/$/,'')+'/';
  if(pages[path]) {
-  let html=pages[path];
+  let html=await template(path);
+  const env=await getRuntime();
+  html=html.replaceAll('https://distribuidora-3-irmaos.josiasbonfim.chatgpt.site',new URL(request.url).origin);
   if(path!=='/admin/') {
    const {state}=await readState(env),catalog=publicCatalog(state),now=Date.now();
    const json=(value:unknown)=>JSON.stringify(value).replace(/</g,'\\u003c');

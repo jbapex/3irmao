@@ -1,61 +1,67 @@
 # Distribuidora 3 Irmãos
 
-Código da versão 31 do site, publicada em ChatGPT Sites. Inclui o catálogo, as fotos, a animação da capa, o jogo da história, as duas lojas com mapas e o painel administrativo.
+Site com catálogo, ofertas programadas, painel administrativo, mapas das lojas, capa animada e jogo da história. Esta versão usa Next.js em Node.js e pode ser implantada na Hostinger. O código original da versão 31 em Cloudflare permanece no histórico do Git.
 
-Site: https://distribuidora-3-irmaos.josiasbonfim.chatgpt.site/
+## Implantar na Hostinger
 
-## Estrutura
+- Framework: **Next.js**.
+- Node.js: **22.x** (22.13 ou superior) ou **24.x**.
+- Gerenciador de pacotes: **npm**.
+- Comando de compilação: **npm run build**.
+- Diretório de saída: **.next**.
+- Arquivo de entrada: deixe o padrão do Next.js; o build gera `.next/standalone/server.js`.
+- Diretório raiz ao usar o ZIP fornecido: **3irmao-main**.
 
-- `site/`: HTML, CSS, JavaScript, fotos, fontes e áudio.
-- `content/`: conteúdo inicial do catálogo e templates.
-- `scripts/generate_site.py`: gera as seis páginas públicas em `site/`.
-- `server/`: API do catálogo, ofertas e autenticação do painel.
-- `app/`: rotas Vinext/Cloudflare que servem as páginas e a API.
-- `db/` e `drizzle/`: esquema e migração do banco.
-- `.openai/hosting.json`: identidade do projeto Sites e bindings D1/R2.
+O build prepara automaticamente as fotos, scripts, estilos e modelos HTML. Não exige Python na hospedagem. Depois de publicar, o serviço escuta a porta fornecida pela plataforma.
 
-## Funcionalidades
+## Banco e painel administrativo
 
-- Busca por produto, marca e categoria, fotos ampliadas e lista com quantidades.
-- Consulta por WhatsApp com seleção da unidade.
-- Ofertas com preço, início e término; ocultação automática fora do período.
-- Admin em `/admin/` para produtos, categorias, fotos e ofertas.
-- Mapas de Rio Branco do Sul e Itaperuçu na home e na página de lojas.
-- Capa animada com três cenas e jogo da história com Dedei.
-- Navegação adaptada ao celular.
+O catálogo editável, as ofertas, contas e imagens enviadas no painel ficam em um banco MySQL. Crie um banco dedicado para esta loja na Hostinger e configure as variáveis de ambiente no hPanel:
 
-## Executar
+| Variável | Conteúdo |
+| --- | --- |
+| `DB_HOST` | Host do banco MySQL. |
+| `DB_PORT` | Porta; normalmente `3306`. |
+| `DB_NAME` | Nome do banco. |
+| `DB_USER` | Usuário do banco. |
+| `DB_PASSWORD` | Senha do banco. |
+| `ADMIN_USERNAME` | Login do administrador; padrão `admin`. |
+| `ADMIN_PASSWORD` | Senha inicial com pelo menos 12 caracteres. |
 
-Requer Node.js 24 e Python 3. Instale as dependências e gere os arquivos públicos:
+Também é possível definir `DATABASE_URL` com uma URL `mysql://` no lugar das variáveis `DB_*`. As tabelas são criadas automaticamente no primeiro acesso.
+
+A primeira entrada no painel exige trocar a senha inicial. A nova senha fica armazenada como hash PBKDF2. Cookies de sessão usam HttpOnly, SameSite e Secure em HTTPS; gravações exigem origem válida e token CSRF. O backend normaliza os cabeçalhos da proxy HTTPS da hospedagem.
+
+Sem banco configurado em produção, as páginas públicas e o catálogo inicial continuam disponíveis, e o painel fica bloqueado. Para preservar os dados entre novas implantações, use MySQL. Contas, catálogo e fotos salvas no ambiente original de Cloudflare não são transferidos automaticamente para um novo banco da Hostinger.
+
+## Executar e verificar localmente
 
 ```sh
 npm ci
-python3 scripts/generate_site.py
-node scripts/prepare-public.mjs
 npm run build
+npm start
 ```
 
-A aplicação usa Cloudflare Workers, D1 (`DB`) e R2 (`BUCKET`). Para a prévia local, aplique a migração no banco local criado pelo build:
+Para desenvolvimento, `npm run dev` usa uma base SQLite local em `.data/`. Uma prévia do standalone também pode usar SQLite com `DATA_DIR` apontando para um diretório local de testes; essa opção não é o padrão de produção.
 
 ```sh
-npx wrangler d1 execute DB --local --config dist/server/wrangler.json --persist-to .wrangler/state --file drizzle/0000_silky_praxagora.sql
-npm start -- --port 4317
-```
-
-A migração deve ser aplicada uma vez em um banco novo. O painel requer `ADMIN_USERNAME`, `ADMIN_SALT` e `ADMIN_PASSWORD_HASH`, configurados como segredos no ambiente de hospedagem. O hash usa PBKDF2 com SHA-256, 100.000 iterações e 256 bits. Para uma prévia autenticada, configure esses valores em `dist/server/.dev.vars`, que é ignorado pelo Git.
-
-## Verificações
-
-```sh
-node scripts/test-catalog.mjs
-node scripts/test-admin.mjs
+npm test
+node scripts/test-standalone.mjs
 python3 scripts/audit-static.py
 ```
 
-Os testes HTTP em `scripts/test-admin-http.mjs` e `scripts/test-shopping-http.mjs` usam uma instância local de teste em `localhost:4317` e a conta fictícia definida nesses testes. Não devem ser executados contra o site de produção.
+`npm test` verifica catálogo, autenticação, períodos de oferta, proteção contra gravações concorrentes e persistência do backend Node.js, incluindo fotos e senhas. Os testes HTTP existentes usam apenas `localhost:4317` e uma conta fictícia; não devem ser executados contra produção.
 
-## Dados de produção
+## Editar
 
-Este repositório contém código e assets versionados. O catálogo editado no painel, ofertas salvas, sessões e contas permanecem no D1 do site; imagens enviadas no painel permanecem no R2. Esses dados e segredos de produção não fazem parte do Git. O site publicado continua usando o ambiente existente.
+- `site/`: páginas geradas, CSS, JavaScript, fotos, fontes e áudio.
+- `content/`: conteúdo inicial e templates.
+- `scripts/generate_site.py`: edição dos modelos; execute com Python 3 quando alterar conteúdo/template.
+- `server/api.mjs`: catálogo, ofertas e autenticação.
+- `server/node-runtime.mjs`: MySQL, armazenamento das fotos e SQLite para prévia local.
+- `app/`: rotas Next.js que servem HTML e API.
+- `scripts/prepare-standalone.mjs`: inclui templates e arquivos públicos no servidor standalone.
 
-A origem das imagens e do conteúdo está em `SOURCES.md`. A versão Sites e o commit de origem estão em `docs/proveniencia-sites.json`. As notas antigas de desenvolvimento foram preservadas em `docs/historico-projeto.md`.
+As fontes das fotos estão em `SOURCES.md`; a origem da versão Sites está em `docs/proveniencia-sites.json`. Segredos, dados de produção e dependências locais são ignorados pelo Git.
+
+Documentação da hospedagem: https://www.hostinger.com/support/connecting-a-hostinger-mysql-database-to-a-node-js-application/
