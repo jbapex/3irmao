@@ -1,5 +1,5 @@
 // Adapted dialogues from the family video published in August 2024.
-// Later updates supplied by the family carry their own date labels.
+// Source dates remain documentation; visitor-facing copy tells the story directly.
 export const missions = [
   {x:0,end:16,label:'A rota do Dedei',item:'doces',required:3,kind:'candy',objective:'Pegue os doces e conheça a rota de pai e filho.',actions:[
     {id:'entrega',x:16,label:'Entregar os doces',requires:3,title:'Antes da loja, a estrada.',narrator:'dedei',voices:['dedei','dedei','gabriel','gabriel'],pages:[
@@ -9,17 +9,17 @@ export const missions = [
       'Por volta dos 12 anos, eu estudava de manhã e ajudava nas entregas à tarde. A rota dos doces também virou parte da minha história.'
     ]}
   ]},
-  {x:16,end:32,label:'Tem alguém aí?',item:'chave',required:1,kind:'key',objective:'Atenda o vizinho e leve a chave ao primeiro balcão.',actions:[
+  {x:16,end:32,label:'Tem alguém aí?',item:'chave',required:1,kind:'key',objective:'Atenda o vizinho e suba nas prateleiras para buscar a chave.',actions:[
     {id:'vizinho',x:19.1,label:'Atender na porta',requires:0,title:'Tem doce para vender?',narrator:'dedei',pages:[
       'Mudei o depósito da casa da minha mãe para esta sala. Logo os vizinhos e comerciantes começaram a bater à porta para comprar doces.',
       'Só que eu seguia na rua com o caminhão. O pessoal chegava e não tinha ninguém para atender. Precisávamos abrir esse balcão.'
     ]},
-    {id:'balcao',x:32,label:'Abrir com Leandro',requires:1,after:['vizinho'],title:'Leandro chega ao balcão.',narrator:'leandro',sourceLabel:'História contada por Dedei · ago. 2024',pages:[
+    {id:'balcao',x:32,label:'Abrir com Leandro',requires:1,after:['vizinho'],title:'Leandro chega ao balcão.',narrator:'leandro',sourceLabel:'O primeiro balcão',pages:[
       'Leandro, cunhado de Dedei, estava desempregado quando recebeu o convite para atender no depósito. Dedei continuava com as entregas.',
       'Gabriel também passou a ajudar. Com alguém no balcão e os clientes chegando, aquele depósito começou a virar loja.'
     ]}
   ]},
-  {x:32,end:48,label:'A família faz crescer',item:'produtos',required:3,kind:'product',objective:'Ouça Fernanda e leve os produtos para Gabriel.',actions:[
+  {x:32,end:48,label:'A família faz crescer',item:'produtos',required:3,kind:'product',objective:'Ouça Fernanda e explore os toldos para reunir os produtos.',actions:[
     {id:'fernanda',x:36,label:'Conversar com Fernanda',requires:0,title:'A força de estar junto.',narrator:'fernanda',pages:[
       'No começo, tive receio. O Dedei era muito tímido. Mas vi a vontade e a força dele, e meu papel foi incentivar.',
       'Tivemos momentos bons e momentos difíceis. Na pandemia, chegamos a pensar em fechar. Nossa união ajudou a gente a se reerguer.',
@@ -31,34 +31,33 @@ export const missions = [
       'Depois de abrir a loja, meu pai ainda ficou mais dois anos no caminhão. A família dividia o trabalho para fazer tudo acontecer.'
     ]}
   ]},
-  {x:48,end:64,label:'Olá, Itaperuçu!',item:'pedidos',required:2,kind:'order',objective:'Reúna os pedidos e encontre Camila em Itaperuçu.',actions:[
+  {x:48,end:64,label:'Olá, Itaperuçu!',item:'pedidos',required:2,kind:'order',objective:'Converse no balcão, baixe a ponte e leve os pedidos a Itaperuçu.',actions:[
     {id:'pedido',x:52,label:'Conversar no balcão',requires:0,title:'Uma loja mais perto.',narrator:'gabriel',pages:[
       'Muitos clientes de Itaperuçu vinham comprar em Rio Branco do Sul. Também fazíamos bastante entrega por motoboy.',
       'O pessoal pedia uma loja lá. Conversei com a Camila, minha esposa, para ela me ajudar nessa nova etapa.'
     ]},
-    {id:'itaperucu',x:64,label:'Abrir com Camila',requires:2,after:['pedido'],title:'Camila faz parte dessa história.',narrator:'camila',sourceLabels:['Adaptação do relato · ago. 2024','A loja hoje · Itaperuçu','A loja hoje · Itaperuçu'],pages:[
-      'Quando entrei na distribuidora, logo me senti parte da família. No vídeo de 2024, contei o orgulho de fazer parte dessa loja.',
-      'Hoje, Camila participa das novidades da loja e está mais presente em Itaperuçu, dando continuidade a essa história com Gabriel e a família.',
-      'Os pedidos dos clientes abriram caminho para esta unidade. Agora, as novidades também passam por aqui. A próxima parada é com Murilo!'
+    {id:'itaperucu',x:64,label:'Abrir com Camila',requires:2,after:['pedido'],title:'Mais perto de Itaperuçu.',narrator:'camila',sourceLabel:'Itaperuçu',pages:[
+      'Quando cheguei à distribuidora, logo me senti parte da família. Tenho muito orgulho de fazer parte da 3 Irmãos.',
+      'Em Itaperuçu, sigo com Gabriel e a família. Também participo das novidades que chegam à loja.'
     ]}
   ]},
-  {x:64,end:80,label:'Rio Branco, de casa nova',item:'peças',required:3,kind:'building',objective:'Descubra o nome com Murilo e acenda a nova fachada.',actions:[
+  {x:64,end:80,label:'Rio Branco, de casa nova',item:'peças',required:3,kind:'building',objective:'Encontre Murilo, ligue o elevador e reúna as peças nos andaimes.',actions:[
     {id:'murilo',x:70,label:'Encontrar Murilo',requires:0,title:'Por que Três Irmãos?',narrator:'murilo',voices:['murilo','dedei','gabriel'],pages:[
       'Eu sou o Murilo, o segundo irmão. Estou dando continuidade a essa história. Se você ainda não conhece a distribuidora, venha conhecer!',
       'Antes de Três Irmãos, era Doce Muriel: Murilo e Gabriel. Quando chegou o Davi, nosso terceiro filho, veio o novo nome.',
-      'No vídeo de agosto de 2024, a gente já contava com o Henriquinho, o quarto irmão. A família cresceu, e a marca continuou Três Irmãos.'
+      'Depois veio o Henriquinho, o quarto irmão. A família cresceu, e a marca continuou Três Irmãos.'
     ]},
     {id:'rio-branco',x:80,label:'Acender a fachada',requires:3,after:['murilo'],title:'Uma nova fase em Rio Branco.',narrator:'dedei',sourceLabel:'A história continua · maio de 2026',pages:[
       'A reinauguração de Rio Branco do Sul, em maio de 2026, marcou uma nova etapa depois da abertura de Itaperuçu.',
       'Mais espaço para receber os clientes e continuar uma história que começou com um caminhão, um balcão e a participação de toda a família.'
     ]}
   ]},
-  {x:80,end:100,label:'2027 · O próximo capítulo',item:'chaves',required:2,kind:'key',objective:'Explore as novas portas e receba o convite do Davi.',actions:[
+  {x:80,end:100,label:'2027 · O próximo capítulo',item:'chaves',required:2,kind:'key',objective:'Explore o jardim, encontre as chaves e receba o convite do Davi.',actions:[
     {id:'cerro',x:94,label:'Abrir Cerro Azul',requires:2,title:'Uma nova porta em Cerro Azul.',narrator:'dedei',sourceLabel:'Próximos capítulos · 2027',pages:[
       'Uma nova loja em Cerro Azul está a caminho. É mais um capítulo no crescimento da 3 Irmãos.',
       'Os detalhes da abertura serão anunciados na página Novidades. As duas portas mostram os próximos espaços.'
     ]},
-    {id:'cozinha',x:100,label:'Abrir a cozinha e falar com Davi',requires:2,title:'A história continua com você.',narrator:'gabriel',voices:['gabriel','gabriel','davi'],sourceLabels:['Próximos capítulos · 2027','Próximos capítulos · 2027','O convite de Davi · ago. 2024'],pages:[
+    {id:'cozinha',x:100,label:'Abrir a cozinha e falar com Davi',requires:2,title:'A história continua com você.',narrator:'gabriel',voices:['gabriel','gabriel','davi'],sourceLabels:['Próximos capítulos · 2027','Próximos capítulos · 2027','O convite de Davi'],pages:[
       'A 3 Irmãos também prepara uma cozinha de treinamento. Um novo espaço para compartilhar conhecimento.',
       'Datas, agenda e detalhes dos novos espaços serão anunciados pela loja. E quem deixa o convite para você é o Davi, o terceiro irmão.',
       'Eu sou o terceiro irmão. Venha para a Distribuidora!'
@@ -70,7 +69,7 @@ export const memoryNarrators={
   gabriel:{name:'Gabriel',role:'Filho de Dedei · marido de Camila',photo:'/assets/historia/gabriel-photo.webp',crop:[.22,.01,.6,.461],initials:'G'},
   leandro:{name:'Leandro',role:'Cunhado de Dedei · primeiro balcão',initials:'L'},
   fernanda:{name:'Fernanda',role:'Esposa de Dedei · incentivo e união',initials:'F'},
-  camila:{name:'Camila',role:'Novidades da loja · Itaperuçu',photo:'/assets/historia/camila-photo.png',crop:[.23,.03,.55,.426],initials:'C'},
+  camila:{name:'Camila',role:'Novidades da loja · Itaperuçu',initials:'C'},
   murilo:{name:'Murilo',role:'O segundo irmão',initials:'M'},
   davi:{name:'Davi',role:'O terceiro irmão',initials:'D'}
 };
@@ -92,5 +91,5 @@ export const allActions=missions.flatMap((mission,stage)=>mission.actions.map(ac
 export function actionById(id){return allActions.find(action=>action.id===id);}
 export function memoryPage(action,index=0){
   const narrator=action.voices?.[index]||action.narrator;
-  return{text:action.pages[index],narrator,person:memoryNarrators[narrator],sourceLabel:action.sourceLabels?.[index]||action.sourceLabel||'Adaptação do relato · ago. 2024'};
+  return{text:action.pages[index],narrator,person:memoryNarrators[narrator],sourceLabel:action.sourceLabels?.[index]||action.sourceLabel||'Família 3 Irmãos'};
 }

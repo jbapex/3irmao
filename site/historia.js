@@ -1,7 +1,7 @@
 import * as THREE from './vendor/three.module.min.js';
 import { createStoryWorld } from './historia-world.js';
 import { missions, actionById, memoryPage } from './historia-missions.js';
-import { level, createGame, stepGame, stageCount, nearbyAction, actionLock, interactGame, closeMemory } from './historia-game.js';
+import { level, createGame, stepGame, stageCount, nearbyAction, nearbyMechanism, interactMechanism, actionLock, interactGame, closeMemory } from './historia-game.js';
 import { createGameScreen } from './historia-screen.js';
 import { createGameAudio } from './historia-audio.js';
 import { createGamePerformance } from './historia-performance.js';
@@ -50,37 +50,46 @@ if(root){
   }
   function resumeSiteMotion(){if(globalPaused())document.querySelector('[data-motion-toggle]')?.click();}
   function toast(text,duration=2600){const node=$('[data-game-toast]');node.textContent=text;node.hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>{node.hidden=true;},duration);}
+  function nearbyInteraction(){
+    const action=nearbyAction(game),mechanism=nearbyMechanism(game);
+    if(mechanism&&(!action||game.done.has(action.id)||Math.abs(mechanism.x-game.x)<Math.abs(action.x-game.x)))return{target:mechanism,mechanism:true};
+    return{target:action,mechanism:false};
+  }
   function updateHud(){
-    const m=mission(),fingerprint=[game.chapter,game.collected.size,game.done.size,game.memory?.id,game.memory?.page].join('/');
+    const m=mission(),fingerprint=[game.chapter,game.collected.size,game.done.size,game.activated.size,game.bonuses.size,game.memory?.id,game.memory?.page].join('/');
     if(lastHud!==fingerprint){
       lastHud=fingerprint;
       $('[data-game-score]').textContent=game.chapter+' / '+missions.length;
+      $('[data-game-bonus]').textContent=game.bonuses.size+'/'+level.bonuses.length;
+      $('[data-game-bonus-label]').setAttribute('aria-label',game.bonuses.size+' de '+level.bonuses.length+' estrelas opcionais encontradas');
       $('[data-game-stage]').textContent=game.completed?'Todas as missões concluídas':'Missão '+(game.chapter+1)+' de '+missions.length;
       $('[data-game-objective]').textContent=game.completed?'A história continua com você.':m.label;
-      $('[data-game-task]').textContent=game.completed?'Explore as novas portas ou conheça as novidades.':m.objective;
+      $('[data-game-task]').textContent=game.completed?'Procure as estrelas que faltam ou conheça nossas lojas.':m.objective;
       const tasks=$('[data-game-tasks]');tasks.replaceChildren();
       const item=document.createElement('li');item.textContent=stageCount(game)+'/'+m.required+' '+m.item;item.classList.toggle('is-done',stageCount(game)>=m.required);tasks.append(item);
       const nextAction=m.actions.find(action=>!game.done.has(action.id));
       if(nextAction){const li=document.createElement('li');li.textContent=nextAction.label;tasks.append(li);}
+      const mechanism=level.mechanisms.find(item=>item.stage===game.chapter&&!game.activated.has(item.id));
+      if(mechanism){const li=document.createElement('li');li.textContent=mechanism.label;tasks.append(li);}
       root.querySelectorAll('[data-game-chapter]').forEach((item,i)=>{
         item.classList.toggle('is-unlocked',i<game.chapter);item.classList.toggle('is-current',i===game.chapter);
         if(i===game.chapter)item.setAttribute('aria-current','step');else item.removeAttribute('aria-current');
       });
       root.classList.toggle('is-reading-memory',!!game.memory);
       sound.setReading(!!game.memory);
-      if(game.memory){const a=actionById(game.memory.id),p=memoryPage(a,game.memory.page);$('[data-game-narration]').textContent=p.person.name+'. '+p.sourceLabel+'. '+a.title+' '+p.text;}
+      if(game.memory){const a=actionById(game.memory.id),p=memoryPage(a,game.memory.page);$('[data-game-narration]').textContent=p.person.name+'. '+a.title+' '+p.text;}
       else $('[data-game-narration]').textContent='';
     }
-    const nearby=nearbyAction(game),signature=[game.memory?.id,game.memory?.page,nearby?.id,game.done.size,game.collected.size,game.completed,mode].join('/');
+    const interaction=nearbyInteraction(),nearby=interaction.target,signature=[game.memory?.id,game.memory?.page,nearby?.id,game.done.size,game.collected.size,game.activated.size,game.completed,mode].join('/');
     if(lastAction===signature)return;lastAction=signature;
     actionDock.hidden=mode!=='playing'||(!nearby&&!game.memory&&!game.completed);
     actionButton.hidden=!nearby&&!game.memory;
     const context=$('[data-game-action-context]');
-    context.hidden=!!game.memory||!nearby;context.textContent=nearby?(actionLock(game,nearby)||(!game.done.has(nearby.id)&&nearby.cue)||nearby.context):'';
+    context.hidden=!!game.memory||!nearby;context.textContent=nearby?(interaction.mechanism?nearby.context:actionLock(game,nearby)||(!game.done.has(nearby.id)&&nearby.cue)||nearby.context):'';
     $('[data-game-memory-back]').hidden=!game.memory;
     $('[data-game-ending]').hidden=!game.completed||!!game.memory;
     if(game.memory){const a=actionById(game.memory.id);actionButton.textContent=game.memory.page<a.pages.length-1?'Continuar':game.done.has(a.id)?'Voltar ao caminho':a.finish||a.label;actionButton.dataset.locked='false';}
-    else if(nearby){actionButton.textContent=game.done.has(nearby.id)?'Rever lembrança':nearby.label;actionButton.dataset.locked=String(!!actionLock(game,nearby));}
+    else if(nearby){actionButton.textContent=!interaction.mechanism&&game.done.has(nearby.id)?'Rever lembrança':nearby.label;actionButton.dataset.locked=String(!interaction.mechanism&&!!actionLock(game,nearby));}
   }
   function draw(dt=0,snap=false){
     if(!ready)return;
@@ -91,7 +100,7 @@ if(root){
   }
   function openPanel(){
     if(!ready)return;mode='panel';clearInput();stopFrame();updateHud();
-    $('[data-game-dialog-score]').textContent=game.chapter+' de '+missions.length+' missões concluídas';
+    $('[data-game-dialog-score]').textContent=game.chapter+' de '+missions.length+' missões · '+game.bonuses.size+' de '+level.bonuses.length+' estrelas';
     draw(0,true);if(!dialog.open){dialog.showModal();document.body.classList.add('dialog-open');}
   }
   function reset(){game=createGame();elapsed=0;lastHud='';lastAction='';clearInput();clearTimeout(toastTimer);$('[data-game-toast]').hidden=true;updateHud();draw(0,true);}
@@ -121,6 +130,9 @@ if(root){
       if(['jump','land','collect','hint','respawn','complete'].includes(event.type))sound.play(event.type);
       if(event.type==='memory')sound.play('page');
       if(event.type==='checkpoint')sound.play('mission');
+      if(event.type==='bonus'){sound.play('collect');toast('Estrela encontrada · '+game.bonuses.size+'/'+level.bonuses.length);}
+      if(event.type==='mechanism'){sound.play('door');toast(event.text,3500);}
+      if(event.type==='waypoint'){sound.play('click');toast(event.text);}
       if(event.type==='action')sound.play(['balcao','itaperucu','rio-branco','cerro','cozinha'].includes(event.id)?'door':'click');
       if(event.type==='collect')toast(stageCount(game)+'/'+mission().required+' '+mission().item+' encontrados');
       if(event.type==='respawn'){clearInput();toast('De volta à última parada. Suas conquistas continuam com você!');draw(0,true);}
@@ -132,7 +144,7 @@ if(root){
     }
     updateHud();
   }
-  function activate(){if(mode!=='playing')return;clearInput();process(interactGame(game));viewport.focus({preventScroll:true});startFrame();}
+  function activate(){if(mode!=='playing')return;const mechanism=!game.memory&&nearbyInteraction().mechanism;clearInput();process(mechanism?interactMechanism(game):interactGame(game));viewport.focus({preventScroll:true});startFrame();}
   function leaveMemory(){closeMemory(game);clearInput();updateHud();viewport.focus({preventScroll:true});startFrame();}
   function input(){
     const held=[...pointers.values()];const a=keys.has('ArrowLeft')||keys.has('KeyA')||held.includes('left');const d=keys.has('ArrowRight')||keys.has('KeyD')||held.includes('right');

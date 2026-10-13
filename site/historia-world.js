@@ -5,6 +5,7 @@ import { createGabriel } from './historia-gabriel.js';
 import { createFamily } from './historia-family.js';
 import { createCharacterShapes } from './historia-character-shapes.js';
 import { createVillageKit } from './historia-village.js';
+import { createScenarioScenery } from './historia-scenery.js';
 import { missions, actionById, memoryNarrators, memoryPage } from './historia-missions.js';
 
 // An original real-time miniature. Dedei is stylized from the supplied photo; buildings are illustrative.
@@ -59,7 +60,11 @@ export function createStoryWorld(gameLevel = null) {
   const ball = (sx, sy, sz, color, parent, x = 0, y = 0, z = 0) => {
     const object = mesh(sphereGeometry, color, parent, x, y, z); object.scale.set(sx, sy, sz); return object;
   };
-  const cylinder = (radius, height, color, parent, x, y, z, radial = 20) => mesh(new THREE.CylinderGeometry(radius, radius, height, radial), color, parent, x, y, z);
+  const cylinder = (radius, height, color, parent, x, y, z, radial = 20) => {
+    const key='cylinder/'+radius+'/'+height+'/'+radial;
+    if(!geometries.has(key))geometries.set(key,new THREE.CylinderGeometry(radius,radius,height,radial));
+    return mesh(geometries.get(key),color,parent,x,y,z);
+  };
   function group(parent, x = 0, y = 0, z = 0) { const object = new THREE.Group(); object.position.set(x, y, z); parent.add(object); return object; }
   const characterShapes=createCharacterShapes({mesh,group,mat});
 
@@ -97,14 +102,20 @@ export function createStoryWorld(gameLevel = null) {
     surfaces.ground(scene,150,22,48,-11.7);surfaces.ground(scene,150,10,48,9.8);
     let left = -18;
     [...gameLevel.gaps, [gameLevel.end + 18, gameLevel.end + 19]].forEach(([gapLeft, gapRight]) => {
-      const w = gapLeft - left, x = (left + gapLeft) / 2 - 1.4;
-      box(w, .55, 5.3, '#dbc397', scene, x, -.29, 2.1, .045);
-      box(w, .1, 5.1, '#f5e5c7', scene, x, -.04, 2.1, .025);
-      village.pavement(scene,w,5.1,x,.013,2.1);
-      box(w, .17, .18, '#fff3d9', scene, x, -.02, -.45, .025);
-      box(w, .17, .18, '#fff3d9', scene, x, -.02, 4.65, .025);
+      const boundaries=[left,...[0,16,32,48,64,80,102].filter(value=>value>left&&value<gapLeft),gapLeft];
+      for(let index=0;index<boundaries.length-1;index++) {
+        const start=boundaries[index],end=boundaries[index+1],w=end-start,x=(start+end)/2-1.4;
+        const stage=Math.min(5,Math.max(0,Math.floor((start+end)/2/16)));
+        const paving=['#f5e5c7','#d5dfe2','#f1dbc0','#e6dcc4','#d4d2c7','#e2e6c3'][stage];
+        box(w,.55,5.3,'#dbc397',scene,x,-.29,2.1,.045);
+        box(w,.1,5.1,paving,scene,x,-.04,2.1,.025);
+        village.pavement(scene,w,5.1,x,.013,2.1);
+        box(w,.17,.18,'#fff3d9',scene,x,-.02,-.45,.025);
+        box(w,.17,.18,'#fff3d9',scene,x,-.02,4.65,.025);
+      }
       if (gapLeft < gameLevel.end) {
-        box(gapRight - gapLeft, .1, 5.2, '#86d1df', scene, (gapLeft + gapRight) / 2 - 1.4, -3, 2.1);
+        const constructionGap=gapLeft>64&&gapLeft<80,roadDitch=gapLeft<16;
+        box(gapRight-gapLeft,.1,5.2,constructionGap?'#c3aa83':roadDitch?'#9e9b72':'#86d1df',scene,(gapLeft+gapRight)/2-1.4,constructionGap?-1.7:-3,2.1);
         [gapLeft - .12, gapRight + .12].forEach(edge => box(.18, .04, 5.0, '#edb92e', scene, edge - 1.4, .04, 2.1, .01));
       }
       left = gapRight;
@@ -337,9 +348,9 @@ export function createStoryWorld(gameLevel = null) {
   let particles=[];
   function onEvent(event,state,motion=true){
     if(!motion)return;
-    const celebration=event.type==='checkpoint'||event.type==='complete',collect=event.type==='collect';
+    const celebration=event.type==='checkpoint'||event.type==='complete'||event.type==='bonus',collect=event.type==='collect';
     if(!celebration&&!collect&&!['jump','land'].includes(event.type))return;
-    const sweet=collect?gameLevel?.candies.find(c=>c.id===event.id):null;
+    const sweet=collect?gameLevel?.candies.find(c=>c.id===event.id):event.type==='bonus'?gameLevel?.bonuses?.find(c=>c.id===event.id):null;
     const x=(sweet?.x??state.x)-1.4,y=sweet?.y??(state.y+(celebration?2:.12));
     const count=celebration?24:collect?10:5;
     for(let i=0;i<count;i++){
@@ -425,7 +436,6 @@ export function createStoryWorld(gameLevel = null) {
     lines(action.pages[memory.page],bodySize,bodyY,'#405773');
     ctx.fillStyle='#1747c8';ctx.font='700 '+(portrait?46:38)+'px Arial, sans-serif';
     ctx.fillText(String(memory.page+1).padStart(2,'0')+' / '+String(action.pages.length).padStart(2,'0'),66,canvasHeight-(portrait?76:48));
-    ctx.textAlign='right';ctx.font='400 '+(portrait?27:20)+'px Arial, sans-serif';ctx.fillStyle='#61758b';ctx.fillText(page.sourceLabel,954,canvasHeight-(portrait?66:40),700);
     const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;
     boardFace.material.map?.dispose();boardFace.material.dispose();
     boardFace.material=new THREE.MeshBasicMaterial({map:texture,toneMapped:false});
@@ -464,7 +474,9 @@ export function createStoryWorld(gameLevel = null) {
       sweets.push({ id: candy.id, y: candy.y, group: g, kind:candy.kind });
     });
   }
+  const scenery=gameLevel?createScenarioScenery({scene,level:gameLevel,box,ball,cylinder,group,mesh,mat,sign,parcel}):null;
   function syncGame(state, time, decorativeMotion) {
+    scenery?.sync(state,time,decorativeMotion);
     sweets.forEach(sweet => {
       sweet.group.visible = !state.collected.has(sweet.id);
       sweet.group.position.y = sweet.y + (decorativeMotion ? Math.sin(time * 2 + sweet.id) * .045 : 0);
@@ -513,7 +525,7 @@ export function createStoryWorld(gameLevel = null) {
   const smile=mesh(new THREE.TorusGeometry(.13,.015,8,22,Math.PI),'#805c53',head,0,-.205,.405);smile.rotation.z=Math.PI;
   guide.rotation.y=.12;
 
-  let cameraX = 0, walkTime = 0, facing = .12;
+  let cameraX = 0, cameraY = 0, walkTime = 0, facing = .12;
   const cameraAim=new THREE.Vector3(), cameraTarget=new THREE.Vector3(), aimTarget=new THREE.Vector3();
   function update(position, velocity, dt, time, width, height, move = true, snap = false, elevation = 0, airborne = false) {
     gabriel.update(time,move,position,!!memoryState);
@@ -533,9 +545,17 @@ export function createStoryWorld(gameLevel = null) {
     guide.position.x = position - 1.4;
     guide.position.y = elevation;
     guide.visible=!memoryState;
-    contact.position.x=position-1.4;contact.position.z=2.4;
-    contact.visible=!memoryState&&!(gameLevel?.gaps.some(([l,r])=>position>l&&position<r));
-    contact.scale.setScalar(1+Math.max(0,elevation)*.16);contact.material.uniforms.opacity.value=.27/(1+Math.max(0,elevation)*.6);
+    const aboveGap=gameLevel?.gaps.some(([l,r])=>position>l&&position<r);
+    let playerSurface=aboveGap?-Infinity:0;
+    for(const block of gameLevel?.blocks||[])if(Math.abs(position-block.x)<block.width/2&&block.height<=elevation+.06)playerSurface=Math.max(playerSurface,block.height);
+    for(const item of scenery?.platforms||[]) {
+      const surface=item.root.userData.collider;
+      if(surface?.active&&Math.abs(position-surface.x)<surface.width/2&&surface.y<=elevation+.06)playerSurface=Math.max(playerSurface,surface.y);
+    }
+    contact.position.x=position-1.4;contact.position.z=2.4;contact.position.y=Number.isFinite(playerSurface)?playerSurface+.026:0;
+    contact.visible=!memoryState&&Number.isFinite(playerSurface);
+    const shadowHeight=Number.isFinite(playerSurface)?Math.max(0,elevation-playerSurface):0;
+    contact.scale.setScalar(1+shadowHeight*.16);contact.material.uniforms.opacity.value=.27/(1+shadowHeight*.6);
     const stride = walking && move ? Math.sin(walkTime) * .5 : 0;
     leftLeg.rotation.x = airborne ? -.45 : stride; rightLeg.rotation.x = airborne ? .2 : -stride;
     knees.forEach((knee,i)=>{knee.rotation.x=airborne?.65:walking&&move?Math.max(0,Math.sin(walkTime+(i?Math.PI:0)))*.48:0;});
@@ -554,8 +574,11 @@ export function createStoryWorld(gameLevel = null) {
     // A narrow, tall display needs a wider view and less horizontal camera lead.
     // This keeps both the player and the next jump on screen after rotation.
     const distance = portrait ? Math.max(19, 10 / aspect) : mobile ? 17.5 : 16.8;
-    cameraTarget.set(cameraX+lead+(gameLevel?portrait?1.3:2.8:4),gameLevel?6.4:mobile?7:7.4,distance);
-    aimTarget.set(cameraX+lead,gameLevel?2.1:1.6,-.2);
+    // Follow the upper routes enough to keep both Dedei and his landing in view.
+    const verticalTarget=gameLevel?Math.max(0,Math.min(3.5,elevation*.67)):0;
+    cameraY+=(verticalTarget-cameraY)*(snap?1:1-Math.exp(-dt*4));
+    cameraTarget.set(cameraX+lead+(gameLevel?portrait?1.3:2.8:4),(gameLevel?6.4:mobile?7:7.4)+cameraY,distance);
+    aimTarget.set(cameraX+lead,(gameLevel?2.1:1.6)+cameraY,-.2);
     if(memoryState){
       const topSpace=aspect<1?76:62,bottomSpace=aspect<1?124:96;
       const fillY=Math.max(.42,Math.min(.72,(height-topSpace-bottomSpace)/height));
@@ -607,5 +630,5 @@ export function createStoryWorld(gameLevel = null) {
       });
     }));
   }
-  return { scene, camera, guide, update, resize, dispose, sun, syncGame, setMemory, memoryBoard, memoryScene, render, configureRenderer, onEvent, gabriel:gabriel.root, family:family.characters };
+  return { scene, camera, guide, update, resize, dispose, sun, syncGame, setMemory, memoryBoard, memoryScene, render, configureRenderer, onEvent, scenery, gabriel:gabriel.root, family:family.characters };
 }

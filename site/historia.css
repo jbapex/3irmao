@@ -65,6 +65,7 @@ body[data-page=sobre]{background:#fff;color:#19315d}
 .game-hud{position:absolute;inset:18px 22px auto;z-index:3;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;pointer-events:none}
 .game-score{display:flex;align-items:center;gap:10px;min-height:48px;padding:5px 13px 5px 5px;border:1px solid #fff;border-radius:14px;background:#ffffffed;box-shadow:0 3px 12px #23436912;color:#193b72}
 .game-score img{width:38px;height:38px;border-radius:10px;object-fit:cover;object-position:50% 20%}.game-score>div{display:grid;line-height:1.25}.game-score strong{font-size:1rem}.game-score>div>span{font-size:.75rem;color:#60718a}
+.game-bonus{display:flex;align-items:center;gap:4px;border-left:1px solid #d8e2ed;padding-left:9px;margin-left:2px;white-space:nowrap}.game-bonus>span{color:#ad7700;font-size:1.1rem}.game-bonus strong{font-size:.8125rem}
 .game-actions{display:flex;align-items:center;gap:4px;pointer-events:auto;background:#fffffff2;padding:4px;border:1px solid #fff;border-radius:14px;box-shadow:0 3px 12px #23436912}
 .game-actions button{min-width:44px;height:44px;padding:0;border:0;border-radius:10px;display:grid;place-items:center;color:#1747c8;background:transparent;font-size:24px;line-height:1;touch-action:manipulation;flex-shrink:0}
 .game-actions button:hover{background:#eaf1fc}.game-actions .game-screen-toggle{display:flex;justify-content:center;align-items:center;gap:8px;width:auto;padding-inline:10px;font-size:.875rem;font-weight:700}
@@ -162,14 +163,3 @@ body[data-page=sobre]{background:#fff;color:#19315d}
 .game-action-context{flex-basis:100%;width:100%;max-width:330px;margin:0 auto 1px;padding:6px 10px;border-radius:9px;background:#fffffff5;color:#23446b;font-size:.8125rem;line-height:1.4;text-align:center;box-shadow:0 2px 9px #102d5010;pointer-events:none}
 .game-story-note{font-size:.8125rem;line-height:1.5;color:#60718a;margin-top:12px}
 .is-reading-memory .game-action-context{display:none}
-
-/* Family cast follows the same story, outside the controls and reading surface. */
-.story-family{background:#f4f7fc;border-top:1px solid #dfe7f1;border-bottom:1px solid #dfe7f1}
-.family-heading{max-width:700px;margin-bottom:36px}.family-heading h2{font-size:clamp(2rem,4.2vw,3.4rem);line-height:1.12;letter-spacing:-.035em;color:#19315d;margin:10px 0 18px}.family-heading h2 em{font-style:normal;color:#1747c8}.family-heading>p:last-child{max-width:600px;color:#526580;line-height:1.75}
-.family-layout{display:grid;grid-template-columns:minmax(260px,.85fr) 1.45fr;gap:48px;align-items:start}
-.family-camila{overflow:hidden;background:white;border:1px solid #dbe5ef;border-radius:22px;box-shadow:0 12px 30px #19315d12,0 2px 5px #19315d0a}
-.family-camila-art{height:340px;background:#e3edfa;overflow:hidden;display:flex;align-items:flex-end;justify-content:center}.family-camila-art img{width:100%;height:100%;object-fit:contain;object-position:center bottom;display:block}
-.family-camila-copy{padding:25px 28px 29px}.family-camila-copy>span{color:#1747c8;font-size:.75rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase}.family-camila-copy h3{font-size:1.8rem;color:#19315d;margin:5px 0 10px}.family-camila-copy p{color:#526580;font-size:.9375rem;line-height:1.7;margin:0}
-.family-people dl{display:grid;grid-template-columns:1fr 1fr;column-gap:30px;margin:0}.family-people dl>div{padding:23px 0 25px;border-top:1px solid #cbd8e7}.family-people dt{font-size:1.2rem;font-weight:700;color:#19315d;margin-bottom:9px}.family-people dd{margin:0;font-size:.9375rem;color:#526580;line-height:1.7}.family-footnote{font-size:.8125rem;line-height:1.7;color:#65758c;border-top:1px solid #cbd8e7;padding-top:20px;margin-top:0}
-@media(max-width:800px){.family-layout{grid-template-columns:1fr;gap:30px}.family-camila{display:grid;grid-template-columns:.9fr 1.1fr;align-items:center}.family-camila-art{height:290px}.family-camila-copy{padding:24px}.family-heading{margin-bottom:26px}}
-@media(max-width:480px){.family-camila{display:block}.family-camila-art{height:300px}.family-people dl{column-gap:20px}.family-people dl>div{padding:19px 0}.family-people dd{font-size:.875rem}.family-camila-copy{padding:23px}.family-heading h2{font-size:2.1rem}}

@@ -1,19 +1,10 @@
 import { chapters } from './historia-model.js';
 import { missions, allActions, actionById } from './historia-missions.js';
-const itemOffsets = [[3.15,1.35],[8.35,3.3],[11.85,3.8]];
-export const level = {
-  end:102,
-  gaps:missions.map(m=>[m.x+10.7,m.x+13.1]),
-  blocks:missions.flatMap(m=>[{x:m.x+4.8,width:1.65,height:.85},{x:m.x+8.35,width:2.05,height:1.45}]),
-  candies:missions.flatMap((m,stage)=>{
-    const slots=stage===1?[2]:stage===3?[0,2]:stage===5?[0,1]:[0,1,2];
-    return slots.map((slot,index)=>({id:stage*3+index,stage,x:stage===3?[51.15,62][index]:m.x+itemOffsets[slot][0],y:stage===3?1.3:itemOffsets[slot][1],kind:m.kind,name:m.kind==='product'?['Doces','Embalagens','Confeitaria'][index]:m.item}));
-  }),
-  actions:allActions
-};
+import { level, platformAt } from './historia-level.js';
+export { level, platformAt };
 export const physics = { radius: .33, height: 2.45, speed: 5.8, acceleration: 36, gravity: 24, jump: 10.7 };
 export function createGame() {
-  return { x: 0, y: 0, vx: 0, vy: 0, grounded: true, chapter: 0, collected: new Set(), done: new Set(), memory: null, completed: false, coyote: .1, jumpBuffer: 0, jumpHeld: false, falls: 0 };
+  return { x: 0, y: 0, vx: 0, vy: 0, grounded: true, chapter: 0, collected: new Set(), done: new Set(), memory: null, completed: false, coyote: .1, jumpBuffer: 0, jumpHeld: false, falls: 0, time: 0, standing: null, activated: new Set(), activatedAt: {}, bonuses: new Set(), visited: new Set(), checkpoint: {x:0,y:0} };
 }
 export function stageCount(game, stage = Math.min(game.chapter, missions.length - 1)) {
   return level.candies.filter(candy => candy.stage === stage && game.collected.has(candy.id)).length;
@@ -22,7 +13,7 @@ function groundAt(x) {
   return !level.gaps.some(([left, right]) => x > left && x < right);
 }
 export function respawn(game) {
-  game.x = chapters[game.chapter].x; game.y = 0; game.vx = 0; game.vy = 0;
+  game.x = game.checkpoint.x; game.y = game.checkpoint.y; game.standing = null; game.vx = 0; game.vy = 0;
   game.grounded = true; game.coyote = .1; game.jumpBuffer = 0; game.jumpHeld = false; game.falls++;
 }
 export function stepGame(game, input, delta) {
@@ -30,13 +21,26 @@ export function stepGame(game, input, delta) {
   if (game.memory) return events;
   const dt = Math.min(Math.max(Number.isFinite(delta) ? delta : 0, 0), 1 / 30);
   if (!dt) return events;
+  const standing = game.standing;
+  const previousPlatforms = new Map(level.platforms.map(platform => [platform.id, platformAt(platform, game)]));
+  game.time += dt;
+  // Carry the feet with their support before applying the player's own motion.
+  // This works on both halves of a lift cycle, including a descending platform.
+  if (game.grounded && standing) {
+    const support = level.platforms.find(platform => platform.id === standing);
+    const before = previousPlatforms.get(standing), after = support && platformAt(support, game);
+    if (after?.active && Math.abs(game.x - before.x) < support.width / 2 + physics.radius) {
+      game.x += after.x - before.x;
+      game.y += after.y - before.y;
+    } else { game.grounded = false; game.standing = null; }
+  }
   const direction = Math.max(-1, Math.min(1, Number(input.axis) || 0));
   const jumpPressed = !!input.jump && !game.jumpHeld;
   game.jumpHeld = !!input.jump;
   game.jumpBuffer = jumpPressed ? .12 : Math.max(0, game.jumpBuffer - dt);
   game.coyote = game.grounded ? .1 : Math.max(0, game.coyote - dt);
   if (game.jumpBuffer > 0 && game.coyote > 0) {
-    game.vy = physics.jump; game.grounded = false; game.coyote = 0; game.jumpBuffer = 0;
+    game.vy = physics.jump; game.grounded = false; game.standing = null; game.coyote = 0; game.jumpBuffer = 0;
     events.push({ type: 'jump' });
   }
   const desired = direction * physics.speed;
@@ -60,12 +64,25 @@ export function stepGame(game, input, delta) {
   let nextY = game.y + game.vy * dt;
   game.grounded = false;
   let landing = -Infinity;
+  let landingSupport = null;
   if (groundAt(game.x) && beforeY >= -.04 && nextY <= 0) landing = 0;
   for (const block of level.blocks) {
     const overlap = game.x + physics.radius > block.x - block.width / 2 + .03 && game.x - physics.radius < block.x + block.width / 2 - .03;
     if (overlap && game.vy <= 0 && beforeY >= block.height - .025 && nextY <= block.height) landing = Math.max(landing, block.height);
   }
+  for (const platform of level.platforms) {
+    const point = platformAt(platform, game), before = previousPlatforms.get(platform.id);
+    if (!point.active) continue;
+    const overlap = game.x + physics.radius > point.x - platform.width / 2 + .03 && game.x - physics.radius < point.x + platform.width / 2 - .03;
+    const previousTop = standing === platform.id ? point.y : before.y;
+    // One-way surfaces: feet must cross the top while falling. Rising jumps
+    // pass underneath without getting pulled onto the platform.
+    if (overlap && game.vy <= 0 && beforeY >= previousTop - .025 && nextY <= point.y && point.y > landing) {
+      landing = point.y; landingSupport = platform.id;
+    }
+  }
   if (landing !== -Infinity) { nextY = landing; game.vy = 0; game.grounded = true; }
+  game.standing = landingSupport;
   game.y = nextY;
   // A ledge cannot be crossed from its underside after falling into a gap.
   if (game.y < -.12 && groundAt(game.x)) {
@@ -76,6 +93,19 @@ export function stepGame(game, input, delta) {
     if (candy.stage > game.chapter || game.collected.has(candy.id)) continue;
     if (Math.abs(game.x - candy.x) < .65 && candy.y > game.y - .2 && candy.y < game.y + physics.height + .28) {
       game.collected.add(candy.id); events.push({ type: 'collect', id: candy.id });
+    }
+  }
+  for (const bonus of level.bonuses) {
+    if (bonus.stage > game.chapter || game.bonuses.has(bonus.id)) continue;
+    if (Math.abs(game.x - bonus.x) < .6 && bonus.y > game.y - .2 && bonus.y < game.y + physics.height + .2) {
+      game.bonuses.add(bonus.id); events.push({type:'bonus',id:bonus.id});
+    }
+  }
+  for (const waypoint of level.checkpoints) {
+    if (waypoint.stage !== game.chapter || game.visited.has(waypoint.id) || !game.grounded || game.y > .2) continue;
+    if (Math.abs(game.x - waypoint.x) < .7) {
+      game.visited.add(waypoint.id); game.checkpoint = {x:waypoint.x,y:waypoint.y};
+      events.push({type:'waypoint',id:waypoint.id,text:'Caminho salvo. Você volta daqui se cair.'});
     }
   }
   if (game.y < -3.8) { respawn(game); events.push({ type: 'respawn' }); }
@@ -117,7 +147,20 @@ export function advanceMemory(game) {
   const mission=missions[game.chapter];
   if (!game.completed&&mission.actions.every(a=>game.done.has(a.id))&&stageCount(game)>=mission.required) {
     game.chapter++; game.completed=game.chapter===missions.length;
+    game.checkpoint = {x:chapters[game.chapter].x,y:0};
     events.push({type:game.completed?'complete':'checkpoint',chapter:game.chapter});
   }
   return events;
+}
+
+export function nearbyMechanism(game) {
+  if (game.memory || !game.grounded || game.y > .2) return null;
+  return level.mechanisms.filter(mechanism => mechanism.stage === game.chapter && !game.activated.has(mechanism.id) && Math.abs(mechanism.x - game.x) <= 1.8)
+    .sort((a,b) => Math.abs(a.x-game.x)-Math.abs(b.x-game.x))[0] || null;
+}
+export function interactMechanism(game) {
+  const mechanism = nearbyMechanism(game);
+  if (!mechanism) return [];
+  game.activated.add(mechanism.id); game.activatedAt[mechanism.id] = game.time;
+  return [{type:'mechanism',id:mechanism.id,text:mechanism.kind === 'bridge' ? 'Ponte aberta. O caminho para Itaperuçu está livre!' : 'Elevador ligado. Suba na plataforma e explore os andaimes.'}];
 }
