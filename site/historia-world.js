@@ -2,9 +2,10 @@ import * as THREE from './vendor/three.module.min.js';
 import { createSurfaceLibrary } from './historia-surfaces.js';
 import { createGameRendering } from './historia-rendering.js';
 import { createGabriel } from './historia-gabriel.js';
+import { createFamily } from './historia-family.js';
 import { createCharacterShapes } from './historia-character-shapes.js';
 import { createVillageKit } from './historia-village.js';
-import { missions, actionById, memoryNarrators } from './historia-missions.js';
+import { missions, actionById, memoryNarrators, memoryPage } from './historia-missions.js';
 
 // An original real-time miniature. Dedei is stylized from the supplied photo; buildings are illustrative.
 export function createStoryWorld(gameLevel = null) {
@@ -313,6 +314,7 @@ export function createStoryWorld(gameLevel = null) {
     neighbors.push({group:person,arm:body.arms[1],elbow:body.elbows[1],x});
   }
   const gabriel=createGabriel({scene,ball,group,mesh,sign,characterShapes});
+  const family=createFamily({scene,ball,group,mesh,sign,characterShapes});
 
   // Repeated flowers share geometry and one draw call for each material.
   const sprigGeometry=new THREE.ConeGeometry(.035,.46,5),flowerGeometry=new THREE.SphereGeometry(.085,7,5);
@@ -366,6 +368,7 @@ export function createStoryWorld(gameLevel = null) {
   let memoryState=null, boardKey='', boardWidth=7.4, boardHeight=4.4;
   const portraits=new Map();
   if(typeof Image!=='undefined')Object.entries(memoryNarrators).forEach(([id,person])=>{
+    if(!person.photo)return;
     const photo=new Image();
     photo.onload=()=>{portraits.set(id,photo);boardKey='';};
     photo.src=person.photo;
@@ -391,7 +394,7 @@ export function createStoryWorld(gameLevel = null) {
     ctx.fillStyle='#fffdf6';ctx.fillRect(0,0,1024,canvasHeight);
     ctx.fillStyle='#ffd23f';ctx.fillRect(0,0,1024,14);
     ctx.textAlign='left';ctx.textBaseline='top';
-    const narrator=memoryNarrators[action.narrator],photo=portraits.get(action.narrator);
+    const page=memoryPage(action,memory.page),narrator=page.person,photo=portraits.get(page.narrator);
     const photoSize=portrait?144:84,photoX=66,photoY=portrait?48:28;
     ctx.save();ctx.beginPath();ctx.arc(photoX+photoSize/2,photoY+photoSize/2,photoSize/2,0,Math.PI*2);ctx.clip();
     ctx.fillStyle='#dceeff';ctx.fillRect(photoX,photoY,photoSize,photoSize);
@@ -400,7 +403,7 @@ export function createStoryWorld(gameLevel = null) {
     ctx.restore();ctx.textAlign='left';
     const nameX=photoX+photoSize+(portrait?25:20);
     ctx.fillStyle='#19315d';ctx.font='700 '+(portrait?48:32)+'px Arial, sans-serif';ctx.fillText(narrator.name,nameX,photoY+(portrait?12:2));
-    ctx.fillStyle='#536c86';ctx.font='400 '+(portrait?31:23)+'px Arial, sans-serif';ctx.fillText(narrator.role,nameX,photoY+(portrait?72:43));
+    ctx.fillStyle='#536c86';ctx.font='400 '+(portrait?31:23)+'px Arial, sans-serif';ctx.fillText(narrator.role,nameX,photoY+(portrait?72:43),954-nameX);
     ctx.fillStyle='#dce4e9';ctx.fillRect(66,portrait?220:132,888,2);
     const lines=(text,fontSize,y,color,bold=false)=>{
       ctx.font=(bold?'700 ':'400 ')+fontSize+'px Arial, sans-serif';ctx.fillStyle=color;
@@ -422,7 +425,7 @@ export function createStoryWorld(gameLevel = null) {
     lines(action.pages[memory.page],bodySize,bodyY,'#405773');
     ctx.fillStyle='#1747c8';ctx.font='700 '+(portrait?46:38)+'px Arial, sans-serif';
     ctx.fillText(String(memory.page+1).padStart(2,'0')+' / '+String(action.pages.length).padStart(2,'0'),66,canvasHeight-(portrait?76:48));
-    ctx.textAlign='right';ctx.font='400 '+(portrait?29:22)+'px Arial, sans-serif';ctx.fillStyle='#61758b';ctx.fillText('Memória da família',954,canvasHeight-(portrait?66:40));
+    ctx.textAlign='right';ctx.font='400 '+(portrait?27:20)+'px Arial, sans-serif';ctx.fillStyle='#61758b';ctx.fillText(page.sourceLabel,954,canvasHeight-(portrait?66:40),700);
     const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;
     boardFace.material.map?.dispose();boardFace.material.dispose();
     boardFace.material=new THREE.MeshBasicMaterial({map:texture,toneMapped:false});
@@ -514,6 +517,7 @@ export function createStoryWorld(gameLevel = null) {
   const cameraAim=new THREE.Vector3(), cameraTarget=new THREE.Vector3(), aimTarget=new THREE.Vector3();
   function update(position, velocity, dt, time, width, height, move = true, snap = false, elevation = 0, airborne = false) {
     gabriel.update(time,move,position,!!memoryState);
+    family.update(time,move,position,!!memoryState);
     livingTrees.forEach(tree=>{tree.crown.rotation.z=move?Math.sin(time*.8+tree.phase)*.023:0;});
     clouds.forEach(cloud=>{cloud.group.position.x=cloud.x+(move?Math.sin(time*.06+cloud.phase)*2.5:0);});
     floatingBalloons.forEach(balloon=>{balloon.group.rotation.z=move?Math.sin(time*1.1+balloon.phase)*.06:0;balloon.group.position.y=balloon.y+(move?Math.sin(time*1.3+balloon.phase)*.055:0);});
@@ -603,5 +607,5 @@ export function createStoryWorld(gameLevel = null) {
       });
     }));
   }
-  return { scene, camera, guide, update, resize, dispose, sun, syncGame, setMemory, memoryBoard, memoryScene, render, configureRenderer, onEvent, gabriel:gabriel.root };
+  return { scene, camera, guide, update, resize, dispose, sun, syncGame, setMemory, memoryBoard, memoryScene, render, configureRenderer, onEvent, gabriel:gabriel.root, family:family.characters };
 }

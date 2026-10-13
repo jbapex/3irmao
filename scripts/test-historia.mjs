@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { chapters,clampPosition,chapterAt,moveTowards } from '../site/historia-model.js';
-import { missions,allActions,actionById,memoryNarrators } from '../site/historia-missions.js';
+import { missions,allActions,actionById,memoryNarrators,memoryPage } from '../site/historia-missions.js';
 import { existsSync,readFileSync } from 'node:fs';
 import { createStoryWorld } from '../site/historia-world.js';
 import { Vector3 } from '../site/vendor/three.module.min.js';
@@ -9,7 +9,11 @@ assert.equal(missions.length,6);assert.equal(chapters.length,7);
 for(const action of allActions){
  assert.ok(action.context&&memoryNarrators[action.narrator]);
  assert.equal(action.marker.length,3);assert.ok(action.marker.every(Number.isFinite));
- assert.ok(existsSync(new URL('../dist'+memoryNarrators[action.narrator].photo,import.meta.url)));
+ for(let index=0;index<action.pages.length;index++){
+  const page=memoryPage(action,index);
+  assert.ok(page.text&&page.person&&page.sourceLabel,`${action.id} page ${index+1} must identify its speaker and source.`);
+  if(page.person.photo)assert.ok(existsSync(new URL('../site'+page.person.photo,import.meta.url)),`${page.narrator} needs its referenced portrait.`);
+ }
 }
 for(const order of level.candies.filter(item=>item.kind==='order'))assert.ok(!level.gaps.some(([l,r])=>order.x>l&&order.x<r),'Customer orders belong on safe ground.');
 assert.equal(actionById('pedido').requires,0,'Speaking to the customer must not require collecting their order first.');
@@ -22,10 +26,10 @@ assert.equal(moveTowards(15.95,16,.05),16);assert.ok(Math.abs(moveTowards(0,100,
 assert.equal(moveTowards(12,16,-1),12);
 
 // Complete the whole course using movement, jump and nearby-object interaction.
-const run=createGame();let collectedEvents=0,checkpointEvents=0,completeEvents=0,memoryPages=0;
+const run=createGame(),encounteredNarrators=new Set();let collectedEvents=0,checkpointEvents=0,completeEvents=0,memoryPages=0;
 for(let frame=0;frame<15000&&!run.completed;frame++){
  let events=[];
- if(run.memory){events=interactGame(run);memoryPages++;}
+ if(run.memory){encounteredNarrators.add(memoryPage(actionById(run.memory.id),run.memory.page).narrator);events=interactGame(run);memoryPages++;}
  else{
   const nearby=nearbyAction(run);
   if(nearby&&!run.done.has(nearby.id)&&!actionLock(run,nearby))events=interactGame(run);
@@ -34,8 +38,9 @@ for(let frame=0;frame<15000&&!run.completed;frame++){
  for(const e of events){if(e.type==='collect')collectedEvents++;if(e.type==='checkpoint')checkpointEvents++;if(e.type==='complete')completeEvents++;}
 }
 assert.equal(run.completed,true);assert.equal(run.collected.size,14);assert.equal(collectedEvents,14);
-assert.equal(run.done.size,9);assert.equal(checkpointEvents,5);assert.equal(completeEvents,1);assert.equal(run.falls,0);
+assert.equal(run.done.size,allActions.length);assert.equal(checkpointEvents,5);assert.equal(completeEvents,1);assert.equal(run.falls,0);
 assert.equal(memoryPages,allActions.reduce((n,a)=>n+a.pages.length,0));
+assert.deepEqual([...encounteredNarrators].sort(),Object.keys(memoryNarrators).sort(),'A complete playthrough must encounter every family narrator, including page-specific voices.');
 
 const noAction=createGame();noAction.x=16;noAction.collected=new Set([0,1,2]);
 stepGame(noAction,{axis:0,jump:false},1/120);
@@ -80,8 +85,8 @@ for(const [width,height] of sizes){
   const peak=new Vector3(chapter.x-1.4,6.5,2.4).project(world.camera),ahead=new Vector3(chapter.x+2.6,1,2.4).project(world.camera);
   assert.ok(head.x>-.98&&head.x<.98);assert.ok(head.y<.96&&feet.y>-.96);assert.ok(peak.y<.9);assert.ok(ahead.x<.96);
  }
- for(const action of allActions){
-  world.setMemory({id:action.id,page:0},width,height);world.update(action.x,0,0,0,width,height,false,true);world.scene.updateMatrixWorld(true);world.camera.updateMatrixWorld(true);
+ for(const action of allActions)for(let page=0;page<action.pages.length;page++){
+  world.setMemory({id:action.id,page},width,height);world.update(action.x,0,0,0,width,height,false,true);world.scene.updateMatrixWorld(true);world.camera.updateMatrixWorld(true);
   const {width:w,height:h}=world.memoryBoard.userData.dimensions,center=world.memoryBoard.position;
   for(const x of [-w/2,w/2])for(const y of [-h/2,h/2]){
    const corner=new Vector3(center.x+x,center.y+y,center.z+.1).project(world.camera);
@@ -103,6 +108,20 @@ world.memoryScene.traverse(o=>{if(o.isMesh){assert.equal(o.castShadow,false);ass
 calls.length=0;world.setMemory(null,390,844);world.render(renderer);assert.equal(calls.length,1);
 assert.equal(world.gabriel.userData.character.name,'Gabriel');assert.equal(world.gabriel.userData.character.uniform,'3 Irmãos');
 world.update(48,0,0,0,390,844,false,true);assert.equal(world.guide.visible,true);assert.equal(world.gabriel.visible,true);
+assert.deepEqual(Object.keys(world.family).sort(),['camila','davi','fernanda','leandro','murilo']);
+for(const [id,person] of Object.entries(world.family)){
+ assert.equal(person.userData.character.reference,id==='camila'?'client-photo':'illustrative','Only Camila has a newly supplied likeness reference.');
+ assert.equal(person.userData.character.uniform,'3 Irmãos');
+ const playerX=person.position.x+1.4;
+ world.setMemory(null,390,844);world.update(playerX,0,0,0,390,844,false,true);
+ assert.equal(person.visible,true,`${id} must be present when the player reaches the encounter.`);
+ world.setMemory({id:'entrega',page:0},390,844);world.update(playerX,0,0,0,390,844,false,true);
+ assert.equal(person.visible,false,`${id} must not obstruct a memory.`);
+ world.setMemory(null,390,844);world.update(playerX,0,0,0,390,844,false,true);
+ assert.equal(person.visible,true,`${id} must return after the memory closes.`);
+ world.update(playerX+30,0,0,0,390,844,false,true);
+ assert.equal(person.visible,false,`${id} must be hidden when distant to preserve the mobile render budget.`);
+}
 world.onEvent({type:'complete'},run,true);world.setMemory(null,390,844);world.update(100,0,1/60,2,390,844,true,false);
 world.syncGame(run,2,true);world.update(100,0,0,2,390,844,false,true);world.dispose();
-console.log(`Mission game passed: 6 missions, 14 objects, 9 interactions, ${memoryPages} memory pages, full winning run without falls, prerequisites, reverse-order doors, replay, collisions, respawn and reset. ${meshes} meshes/${vertices} vertices; character and memory-board framing at 10 sizes, unobstructed reading render pass, Gabriel uniform and reading-state restoration.`);
+console.log(`Mission game passed: ${missions.length} missions, ${level.candies.length} objects, ${allActions.length} interactions, ${memoryPages} memory pages, full winning run without falls, all family narrators, prerequisites, reverse-order doors, replay, collisions, respawn and reset. ${meshes} meshes/${vertices} vertices; character and memory-board framing at 10 sizes, unobstructed reading render pass, five new family characters and reading-state restoration.`);

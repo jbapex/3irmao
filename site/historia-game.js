@@ -88,7 +88,11 @@ export function nearbyAction(game) {
 }
 export function actionLock(game,action) {
   if (!action || game.done.has(action.id)) return '';
-  if (action.after?.some(id=>!game.done.has(id))) return action.id==='balcao'?'Volte ao depósito e atenda o vizinho na porta.':'Volte à esquerda e converse no balcão de pedidos.';
+  const prerequisite=action.after?.find(id=>!game.done.has(id));
+  if(prerequisite){
+    const reminders={vizinho:'Volte ao depósito e atenda o vizinho na porta.',pedido:'Volte à esquerda e converse no balcão de pedidos.',fernanda:'Volte um pouco e converse com Fernanda.',murilo:'Volte um pouco e encontre Murilo.'};
+    return reminders[prerequisite]||'Conclua a conversa anterior para continuar.';
+  }
   const missing=action.requires-stageCount(game,action.stage);
   return missing>0?'Busque mais '+missing+' '+missions[action.stage].item+' pelo caminho.':'';
 }

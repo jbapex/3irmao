@@ -1,6 +1,6 @@
 import * as THREE from './vendor/three.module.min.js';
 import { createStoryWorld } from './historia-world.js';
-import { missions, actionById, memoryNarrators } from './historia-missions.js';
+import { missions, actionById, memoryPage } from './historia-missions.js';
 import { level, createGame, stepGame, stageCount, nearbyAction, actionLock, interactGame, closeMemory } from './historia-game.js';
 import { createGameScreen } from './historia-screen.js';
 import { createGameAudio } from './historia-audio.js';
@@ -68,7 +68,7 @@ if(root){
       });
       root.classList.toggle('is-reading-memory',!!game.memory);
       sound.setReading(!!game.memory);
-      if(game.memory){const a=actionById(game.memory.id);$('[data-game-narration]').textContent=memoryNarrators[a.narrator].name+'. '+a.context+'. '+a.title+' '+a.pages[game.memory.page];}
+      if(game.memory){const a=actionById(game.memory.id),p=memoryPage(a,game.memory.page);$('[data-game-narration]').textContent=p.person.name+'. '+p.sourceLabel+'. '+a.title+' '+p.text;}
       else $('[data-game-narration]').textContent='';
     }
     const nearby=nearbyAction(game),signature=[game.memory?.id,game.memory?.page,nearby?.id,game.done.size,game.collected.size,game.completed,mode].join('/');
